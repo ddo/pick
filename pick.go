@@ -48,7 +48,7 @@ func PickAttr(option *PickOption, AttrLabel string) (data []string, err error) {
 
 			var label, value []byte
 
-			attr_arr := []*Attr{}
+			data_tmp := []string{}
 
 			matched := false
 
@@ -63,10 +63,9 @@ func PickAttr(option *PickOption, AttrLabel string) (data []string, err error) {
 					matched = true
 				}
 
-				attr_arr = append(attr_arr, &Attr{
-					label_str,
-					value_str,
-				})
+				if label_str == AttrLabel {
+					data_tmp = append(data_tmp, value_str)
+				}
 			}
 
 			if !matched {
@@ -74,13 +73,7 @@ func PickAttr(option *PickOption, AttrLabel string) (data []string, err error) {
 			}
 
 			//loop attr
-			for i := 0; i < len(attr_arr); i++ {
-				attr := attr_arr[i]
-
-				if attr.Label == AttrLabel {
-					data = append(data, attr.Value)
-				}
-			}
+			data = append(data, data_tmp...)
 		}
 	}
 
