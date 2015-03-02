@@ -79,3 +79,74 @@ func PickAttr(option *PickOption, AttrLabel string) (data []string, err error) {
 
 	return data, z.Err()
 }
+
+func PickText(option *PickOption) (data []string, err error) {
+	if option == nil || option.PageSource == "" {
+		return data, nil
+	}
+
+	z := html.NewTokenizer(strings.NewReader(option.PageSource))
+
+	depth := 0
+
+	for {
+		tokenType := z.Next()
+
+		switch tokenType {
+
+		//ignore the error token
+		//quit on eof
+		case html.ErrorToken:
+			if z.Err() == io.EOF {
+				return data, nil
+			}
+
+		case html.TextToken:
+			if depth > 0 {
+				data = append(data, string(z.Text()))
+			}
+
+		case html.EndTagToken:
+			if depth > 0 {
+				depth--
+			}
+
+		case html.StartTagToken:
+			if depth > 0 {
+				depth++
+				continue
+			}
+
+			tagName, attr := z.TagName()
+
+			if string(tagName) != option.TagName {
+				continue
+			}
+
+			var label, value []byte
+
+			matched := false
+
+			//get attr
+			for attr {
+				label, value, attr = z.TagAttr()
+
+				label_str := string(label)
+				value_str := string(value)
+
+				//TODO: break when found
+				if option.Attr == nil || (option.Attr.Label == label_str && option.Attr.Value == value_str) {
+					matched = true
+				}
+			}
+
+			if !matched {
+				continue
+			}
+
+			depth++
+		}
+	}
+
+	return data, z.Err()
+}

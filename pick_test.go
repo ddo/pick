@@ -95,3 +95,43 @@ func TestPickAttrSelfClosingTagToken(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestPickText(t *testing.T) {
+	data, err := PickText(&PickOption{
+		"<div>notme<p>should not include me</p>notme<p class='target'>some text here</p><p class='target'>some text here also</p>notme</div>",
+		"p",
+		&Attr{
+			"class",
+			"target",
+		},
+	})
+
+	if err != nil {
+		t.Fail()
+		return
+	}
+
+	if !reflect.DeepEqual(data, []string{"some text here", "some text here also"}) {
+		t.Fail()
+	}
+}
+
+func TestPickTextTree(t *testing.T) {
+	data, err := PickText(&PickOption{
+		"<div class='target'><div><p>text1</p>text2<ul><li>text3</li><li>text4</li></ul></div></div>",
+		"div",
+		&Attr{
+			"class",
+			"target",
+		},
+	})
+
+	if err != nil {
+		t.Fail()
+		return
+	}
+
+	if !reflect.DeepEqual(data, []string{"text1", "text2", "text3", "text4"}) {
+		t.Fail()
+	}
+}
