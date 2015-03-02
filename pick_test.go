@@ -20,8 +20,10 @@ func TestPickEmptyOption(t *testing.T) {
 }
 
 func TestPickAttrEmptyAttrOption(t *testing.T) {
+	pageSource := "<a href='http://ddo.me'>test</a><a href='http://ddict.me'>test</a>"
+
 	a, err := PickAttr(&PickOption{
-		"<a href='http://ddo.me'>test</a><a href='http://ddict.me'>test</a>",
+		&pageSource,
 		"a",
 		nil,
 	}, "href")
@@ -37,8 +39,10 @@ func TestPickAttrEmptyAttrOption(t *testing.T) {
 }
 
 func TestPickAttr(t *testing.T) {
+	pageSource := "<a href='http://ddo.me'>test</a><a id='target' href='http://ddict.me'>test</a>"
+
 	a, err := PickAttr(&PickOption{
-		"<a href='http://ddo.me'>test</a><a id='target' href='http://ddict.me'>test</a>",
+		&pageSource,
 		"a",
 		&Attr{
 			"id",
@@ -57,8 +61,10 @@ func TestPickAttr(t *testing.T) {
 }
 
 func TestPickAttrFail(t *testing.T) {
+	pageSource := "<a href='http://ddo.me'>test</a><a id='targett' href='http://ddict.me'>test</a>"
+
 	a, err := PickAttr(&PickOption{
-		"<a href='http://ddo.me'>test</a><a id='targett' href='http://ddict.me'>test</a>",
+		&pageSource,
 		"a",
 		&Attr{
 			"id",
@@ -77,8 +83,10 @@ func TestPickAttrFail(t *testing.T) {
 }
 
 func TestPickAttrSelfClosingTagToken(t *testing.T) {
+	pageSource := "<input type='text' id='target' value='haha' />"
+
 	input, err := PickAttr(&PickOption{
-		"<input type='text' id='target' value='haha' />",
+		&pageSource,
 		"input",
 		&Attr{
 			"id",
@@ -97,8 +105,10 @@ func TestPickAttrSelfClosingTagToken(t *testing.T) {
 }
 
 func TestPickText(t *testing.T) {
+	pageSource := "<div>notme<p>should not include me</p>notme<p class='target'>some text here</p><p class='target'>some text here also</p>notme</div>"
+
 	data, err := PickText(&PickOption{
-		"<div>notme<p>should not include me</p>notme<p class='target'>some text here</p><p class='target'>some text here also</p>notme</div>",
+		&pageSource,
 		"p",
 		&Attr{
 			"class",
@@ -117,8 +127,10 @@ func TestPickText(t *testing.T) {
 }
 
 func TestPickTextTree(t *testing.T) {
+	pageSource := "<div class='target'><div><p>text1</p>text2<ul><li>text3</li><li>text4</li></ul></div></div>"
+
 	data, err := PickText(&PickOption{
-		"<div class='target'><div><p>text1</p>text2<ul><li>text3</li><li>text4</li></ul></div></div>",
+		&pageSource,
 		"div",
 		&Attr{
 			"class",

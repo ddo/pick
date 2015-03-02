@@ -8,7 +8,7 @@ import (
 )
 
 type PickOption struct {
-	PageSource string
+	PageSource *string
 	TagName    string
 	Attr       *Attr //optional
 }
@@ -19,11 +19,11 @@ type Attr struct {
 }
 
 func PickAttr(option *PickOption, AttrLabel string) (data []string, err error) {
-	if option == nil || option.PageSource == "" {
+	if option == nil || option.PageSource == nil {
 		return data, nil
 	}
 
-	z := html.NewTokenizer(strings.NewReader(option.PageSource))
+	z := html.NewTokenizer(strings.NewReader(*option.PageSource))
 
 	for {
 		tokenType := z.Next()
@@ -81,11 +81,11 @@ func PickAttr(option *PickOption, AttrLabel string) (data []string, err error) {
 }
 
 func PickText(option *PickOption) (data []string, err error) {
-	if option == nil || option.PageSource == "" {
+	if option == nil || option.PageSource == nil {
 		return data, nil
 	}
 
-	z := html.NewTokenizer(strings.NewReader(option.PageSource))
+	z := html.NewTokenizer(strings.NewReader(*option.PageSource))
 
 	depth := 0
 
