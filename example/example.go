@@ -16,16 +16,16 @@ func main() {
 
 	html := string(body)
 
-	a, _ := pick.PickAttr(&pick.PickOption{
-		html,
+	a, _ := pick.PickAttr(&pick.Option{
+		&html,
 		"a",
 		nil,
 	}, "href")
 
 	fmt.Println(a)
 
-	jumbotron, _ := pick.PickText(&pick.PickOption{
-		html,
+	jumbotron, _ := pick.PickText(&pick.Option{
+		&html,
 		"div",
 		&pick.Attr{
 			"class",
