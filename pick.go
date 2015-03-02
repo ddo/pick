@@ -72,7 +72,7 @@ func PickAttr(option *PickOption, AttrLabel string) (data []string, err error) {
 				continue
 			}
 
-			//loop attr
+			//merge with return data
 			data = append(data, data_tmp...)
 		}
 	}
