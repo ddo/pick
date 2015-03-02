@@ -7,7 +7,7 @@ import (
 	"golang.org/x/net/html"
 )
 
-type PickOption struct {
+type Option struct {
 	PageSource *string
 	TagName    string
 	Attr       *Attr //optional
@@ -18,7 +18,7 @@ type Attr struct {
 	Value string
 }
 
-func PickAttr(option *PickOption, AttrLabel string) (data []string, err error) {
+func PickAttr(option *Option, AttrLabel string) (data []string, err error) {
 	if option == nil || option.PageSource == nil {
 		return data, nil
 	}
@@ -80,7 +80,7 @@ func PickAttr(option *PickOption, AttrLabel string) (data []string, err error) {
 	return data, z.Err()
 }
 
-func PickText(option *PickOption) (data []string, err error) {
+func PickText(option *Option) (data []string, err error) {
 	if option == nil || option.PageSource == nil {
 		return data, nil
 	}

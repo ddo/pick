@@ -22,7 +22,7 @@ func TestPickEmptyOption(t *testing.T) {
 func TestPickAttrEmptyAttrOption(t *testing.T) {
 	pageSource := "<a href='http://ddo.me'>test</a><a href='http://ddict.me'>test</a>"
 
-	a, err := PickAttr(&PickOption{
+	a, err := PickAttr(&Option{
 		&pageSource,
 		"a",
 		nil,
@@ -41,7 +41,7 @@ func TestPickAttrEmptyAttrOption(t *testing.T) {
 func TestPickAttr(t *testing.T) {
 	pageSource := "<a href='http://ddo.me'>test</a><a id='target' href='http://ddict.me'>test</a>"
 
-	a, err := PickAttr(&PickOption{
+	a, err := PickAttr(&Option{
 		&pageSource,
 		"a",
 		&Attr{
@@ -63,7 +63,7 @@ func TestPickAttr(t *testing.T) {
 func TestPickAttrFail(t *testing.T) {
 	pageSource := "<a href='http://ddo.me'>test</a><a id='targett' href='http://ddict.me'>test</a>"
 
-	a, err := PickAttr(&PickOption{
+	a, err := PickAttr(&Option{
 		&pageSource,
 		"a",
 		&Attr{
@@ -85,7 +85,7 @@ func TestPickAttrFail(t *testing.T) {
 func TestPickAttrSelfClosingTagToken(t *testing.T) {
 	pageSource := "<input type='text' id='target' value='haha' />"
 
-	input, err := PickAttr(&PickOption{
+	input, err := PickAttr(&Option{
 		&pageSource,
 		"input",
 		&Attr{
@@ -107,7 +107,7 @@ func TestPickAttrSelfClosingTagToken(t *testing.T) {
 func TestPickText(t *testing.T) {
 	pageSource := "<div>notme<p>should not include me</p>notme<p class='target'>some text here</p><p class='target'>some text here also</p>notme</div>"
 
-	data, err := PickText(&PickOption{
+	data, err := PickText(&Option{
 		&pageSource,
 		"p",
 		&Attr{
@@ -129,7 +129,7 @@ func TestPickText(t *testing.T) {
 func TestPickTextTree(t *testing.T) {
 	pageSource := "<div class='target'><div><p>text1</p>text2<ul><li>text3</li><li>text4</li></ul></div></div>"
 
-	data, err := PickText(&PickOption{
+	data, err := PickText(&Option{
 		&pageSource,
 		"div",
 		&Attr{
