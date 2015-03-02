@@ -26,9 +26,9 @@ func PickAttr(option *PickOption, AttrLabel string) (data []string, err error) {
 	z := html.NewTokenizer(strings.NewReader(option.PageSource))
 
 	for {
-		tt := z.Next()
+		tokenType := z.Next()
 
-		switch tt {
+		switch tokenType {
 
 		//ignore the error token
 		//quit on eof
