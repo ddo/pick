@@ -1,8 +1,8 @@
 package pick
 
 import (
-	// "fmt"
 	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -23,7 +23,7 @@ func TestPickAttrEmptyAttrOption(t *testing.T) {
 	pageSource := "<a href='http://ddo.me'>test</a><a href='http://ddict.me'>test</a>"
 
 	a, err := PickAttr(&Option{
-		&pageSource,
+		strings.NewReader(pageSource),
 		"a",
 		nil,
 	}, "href")
@@ -42,7 +42,7 @@ func TestPickAttr(t *testing.T) {
 	pageSource := "<a href='http://ddo.me'>test</a><a id='target' href='http://ddict.me'>test</a>"
 
 	a, err := PickAttr(&Option{
-		&pageSource,
+		strings.NewReader(pageSource),
 		"a",
 		&Attr{
 			"id",
@@ -64,7 +64,7 @@ func TestPickAttrFail(t *testing.T) {
 	pageSource := "<a href='http://ddo.me'>test</a><a id='targett' href='http://ddict.me'>test</a>"
 
 	a, err := PickAttr(&Option{
-		&pageSource,
+		strings.NewReader(pageSource),
 		"a",
 		&Attr{
 			"id",
@@ -86,7 +86,7 @@ func TestPickAttrSelfClosingTagToken(t *testing.T) {
 	pageSource := "<input type='text' id='target' value='haha' />"
 
 	input, err := PickAttr(&Option{
-		&pageSource,
+		strings.NewReader(pageSource),
 		"input",
 		&Attr{
 			"id",
@@ -108,7 +108,7 @@ func TestPickText(t *testing.T) {
 	pageSource := "<div>notme<p>should not include me</p>notme<p class='target'>some text here</p><p class='target'>some text here also</p>notme</div>"
 
 	data, err := PickText(&Option{
-		&pageSource,
+		strings.NewReader(pageSource),
 		"p",
 		&Attr{
 			"class",
@@ -130,7 +130,7 @@ func TestPickTextTree(t *testing.T) {
 	pageSource := "<div class='target'><div><p>text1</p>text2<ul><li>text3</li><li>text4</li></ul></div></div>"
 
 	data, err := PickText(&Option{
-		&pageSource,
+		strings.NewReader(pageSource),
 		"div",
 		&Attr{
 			"class",

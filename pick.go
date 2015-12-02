@@ -2,13 +2,12 @@ package pick
 
 import (
 	"io"
-	"strings"
 
 	"golang.org/x/net/html"
 )
 
 type Option struct {
-	PageSource *string
+	PageSource io.Reader
 	TagName    string
 	Attr       *Attr //optional
 }
@@ -23,7 +22,7 @@ func PickAttr(option *Option, AttrLabel string) (data []string, err error) {
 		return data, nil
 	}
 
-	z := html.NewTokenizer(strings.NewReader(*option.PageSource))
+	z := html.NewTokenizer(option.PageSource)
 
 	for {
 		tokenType := z.Next()
@@ -85,7 +84,7 @@ func PickText(option *Option) (data []string, err error) {
 		return data, nil
 	}
 
-	z := html.NewTokenizer(strings.NewReader(*option.PageSource))
+	z := html.NewTokenizer(option.PageSource)
 
 	depth := 0
 
