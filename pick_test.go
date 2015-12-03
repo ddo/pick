@@ -7,14 +7,9 @@ import (
 )
 
 func TestPickEmptyOption(t *testing.T) {
-	a, err := PickAttr(nil, "href")
+	res := PickAttr(nil, "href", 0)
 
-	if err != nil {
-		t.Fail()
-		return
-	}
-
-	if len(a) > 0 {
+	if len(res) > 0 {
 		t.Fail()
 	}
 }
@@ -22,18 +17,13 @@ func TestPickEmptyOption(t *testing.T) {
 func TestPickAttrEmptyAttrOption(t *testing.T) {
 	pageSource := "<a href='http://ddo.me'>test</a><a href='http://ddict.me'>test</a>"
 
-	a, err := PickAttr(&Option{
-		strings.NewReader(pageSource),
-		"a",
-		nil,
-	}, "href")
+	res := PickAttr(&Option{
+		PageSource: strings.NewReader(pageSource),
+		TagName:    "a",
+		Attr:       nil,
+	}, "href", 0)
 
-	if err != nil {
-		t.Fail()
-		return
-	}
-
-	if !reflect.DeepEqual(a, []string{"http://ddo.me", "http://ddict.me"}) {
+	if !reflect.DeepEqual(res, []string{"http://ddo.me", "http://ddict.me"}) {
 		t.Fail()
 	}
 }
@@ -41,21 +31,30 @@ func TestPickAttrEmptyAttrOption(t *testing.T) {
 func TestPickAttr(t *testing.T) {
 	pageSource := "<a href='http://ddo.me'>test</a><a id='target' href='http://ddict.me'>test</a>"
 
-	a, err := PickAttr(&Option{
-		strings.NewReader(pageSource),
-		"a",
-		&Attr{
+	res := PickAttr(&Option{
+		PageSource: strings.NewReader(pageSource),
+		TagName:    "a",
+		Attr: &Attr{
 			"id",
 			"target",
 		},
-	}, "href")
+	}, "href", 0)
 
-	if err != nil {
+	if !reflect.DeepEqual(res, []string{"http://ddict.me"}) {
 		t.Fail()
-		return
 	}
+}
 
-	if !reflect.DeepEqual(a, []string{"http://ddict.me"}) {
+func TestPickAttrLimit(t *testing.T) {
+	pageSource := "<a href='http://ddo.me'>test</a><a href='http://ddict.me'>test</a>"
+
+	res := PickAttr(&Option{
+		PageSource: strings.NewReader(pageSource),
+		TagName:    "a",
+		Attr:       nil,
+	}, "href", 1)
+
+	if !reflect.DeepEqual(res, []string{"http://ddo.me"}) {
 		t.Fail()
 	}
 }
@@ -63,21 +62,16 @@ func TestPickAttr(t *testing.T) {
 func TestPickAttrFail(t *testing.T) {
 	pageSource := "<a href='http://ddo.me'>test</a><a id='targett' href='http://ddict.me'>test</a>"
 
-	a, err := PickAttr(&Option{
-		strings.NewReader(pageSource),
-		"a",
-		&Attr{
+	res := PickAttr(&Option{
+		PageSource: strings.NewReader(pageSource),
+		TagName:    "a",
+		Attr: &Attr{
 			"id",
 			"target",
 		},
-	}, "href")
+	}, "href", 0)
 
-	if err != nil {
-		t.Fail()
-		return
-	}
-
-	if len(a) > 0 {
+	if len(res) > 0 {
 		t.Fail()
 	}
 }
@@ -85,21 +79,16 @@ func TestPickAttrFail(t *testing.T) {
 func TestPickAttrSelfClosingTagToken(t *testing.T) {
 	pageSource := "<input type='text' id='target' value='haha' />"
 
-	input, err := PickAttr(&Option{
-		strings.NewReader(pageSource),
-		"input",
-		&Attr{
+	res := PickAttr(&Option{
+		PageSource: strings.NewReader(pageSource),
+		TagName:    "input",
+		Attr: &Attr{
 			"id",
 			"target",
 		},
-	}, "value")
+	}, "value", 0)
 
-	if err != nil {
-		t.Fail()
-		return
-	}
-
-	if !reflect.DeepEqual(input, []string{"haha"}) {
+	if !reflect.DeepEqual(res, []string{"haha"}) {
 		t.Fail()
 	}
 }
@@ -107,21 +96,16 @@ func TestPickAttrSelfClosingTagToken(t *testing.T) {
 func TestPickText(t *testing.T) {
 	pageSource := "<div>notme<p>should not include me</p>notme<p class='target'>some text here</p><p class='target'>some text here also</p>notme</div>"
 
-	data, err := PickText(&Option{
-		strings.NewReader(pageSource),
-		"p",
-		&Attr{
+	res := PickText(&Option{
+		PageSource: strings.NewReader(pageSource),
+		TagName:    "p",
+		Attr: &Attr{
 			"class",
 			"target",
 		},
 	})
 
-	if err != nil {
-		t.Fail()
-		return
-	}
-
-	if !reflect.DeepEqual(data, []string{"some text here", "some text here also"}) {
+	if !reflect.DeepEqual(res, []string{"some text here", "some text here also"}) {
 		t.Fail()
 	}
 }
@@ -129,21 +113,16 @@ func TestPickText(t *testing.T) {
 func TestPickTextTree(t *testing.T) {
 	pageSource := "<div class='target'><div><p>text1</p>text2<ul><li>text3</li><li>text4</li></ul></div></div>"
 
-	data, err := PickText(&Option{
-		strings.NewReader(pageSource),
-		"div",
-		&Attr{
+	res := PickText(&Option{
+		PageSource: strings.NewReader(pageSource),
+		TagName:    "div",
+		Attr: &Attr{
 			"class",
 			"target",
 		},
 	})
 
-	if err != nil {
-		t.Fail()
-		return
-	}
-
-	if !reflect.DeepEqual(data, []string{"text1", "text2", "text3", "text4"}) {
+	if !reflect.DeepEqual(res, []string{"text1", "text2", "text3", "text4"}) {
 		t.Fail()
 	}
 }

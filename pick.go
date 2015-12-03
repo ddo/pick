@@ -9,7 +9,7 @@ import (
 type Option struct {
 	PageSource io.Reader
 	TagName    string
-	Attr       *Attr //optional
+	Attr       *Attr // optional
 }
 
 type Attr struct {
@@ -17,9 +17,9 @@ type Attr struct {
 	Value string
 }
 
-func PickAttr(option *Option, AttrLabel string) (data []string, err error) {
+func PickAttr(option *Option, AttrLabel string, limit int) (res []string) {
 	if option == nil || option.PageSource == nil {
-		return data, nil
+		return
 	}
 
 	z := html.NewTokenizer(option.PageSource)
@@ -29,11 +29,11 @@ func PickAttr(option *Option, AttrLabel string) (data []string, err error) {
 
 		switch tokenType {
 
-		//ignore the error token
-		//quit on eof
+		// ignore the error token
+		// quit on eof
 		case html.ErrorToken:
 			if z.Err() == io.EOF {
-				return data, nil
+				return
 			}
 
 		case html.SelfClosingTagToken:
@@ -47,41 +47,48 @@ func PickAttr(option *Option, AttrLabel string) (data []string, err error) {
 
 			var label, value []byte
 
-			data_tmp := []string{}
-
 			matched := false
+			tmpRes := []string{}
 
-			//get attr
+			// get attr
 			for attr {
 				label, value, attr = z.TagAttr()
 
-				label_str := string(label)
-				value_str := string(value)
+				labelStr := string(label)
+				valueStr := string(value)
 
-				if option.Attr == nil || (option.Attr.Label == label_str && option.Attr.Value == value_str) {
+				// check the attr
+				if option.Attr == nil || (option.Attr.Label == labelStr && option.Attr.Value == valueStr) {
 					matched = true
 				}
 
-				if label_str == AttrLabel {
-					data_tmp = append(data_tmp, value_str)
+				// get the result - even the matched false or true
+				if labelStr == AttrLabel {
+					tmpRes = append(tmpRes, valueStr)
 				}
 			}
 
+			// skip the non matched one
 			if !matched {
 				continue
 			}
 
-			//merge with return data
-			data = append(data, data_tmp...)
+			// send the result for matched only
+			res = append(res, tmpRes...)
+
+			// return when limit
+			if limit > 0 && len(res) >= limit {
+				return
+			}
 		}
 	}
 
-	return data, z.Err()
+	return
 }
 
-func PickText(option *Option) (data []string, err error) {
+func PickText(option *Option) (res []string) {
 	if option == nil || option.PageSource == nil {
-		return data, nil
+		return
 	}
 
 	z := html.NewTokenizer(option.PageSource)
@@ -93,16 +100,16 @@ func PickText(option *Option) (data []string, err error) {
 
 		switch tokenType {
 
-		//ignore the error token
-		//quit on eof
+		// ignore the error token
+		// quit on eof
 		case html.ErrorToken:
 			if z.Err() == io.EOF {
-				return data, nil
+				return
 			}
 
 		case html.TextToken:
 			if depth > 0 {
-				data = append(data, string(z.Text()))
+				res = append(res, string(z.Text()))
 			}
 
 		case html.EndTagToken:
@@ -126,15 +133,12 @@ func PickText(option *Option) (data []string, err error) {
 
 			matched := false
 
-			//get attr
+			// get attr
 			for attr {
 				label, value, attr = z.TagAttr()
 
-				label_str := string(label)
-				value_str := string(value)
-
-				//TODO: break when found
-				if option.Attr == nil || (option.Attr.Label == label_str && option.Attr.Value == value_str) {
+				// TODO: break when found
+				if option.Attr == nil || (option.Attr.Label == string(label) && option.Attr.Value == string(value)) {
 					matched = true
 				}
 			}
@@ -147,5 +151,5 @@ func PickText(option *Option) (data []string, err error) {
 		}
 	}
 
-	return data, z.Err()
+	return
 }
