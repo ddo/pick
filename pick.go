@@ -84,6 +84,7 @@ func PickAttr(option *Option, AttrLabel string, limit int) (res []string) {
 	return
 }
 
+// PickText: get text of elements that matches the Option.TagName (including it's child elements)
 func PickText(option *Option, limit int) (res []string) {
 	if option == nil || option.PageSource == nil {
 		return
@@ -167,6 +168,11 @@ func PickText(option *Option, limit int) (res []string) {
 	return
 }
 
+// isSelfClosingTag: return if it's a self closing tag
+// html.SelfClosingTagToken is not always correct
+// ex:
+//		<input /> 	-> html.SelfClosingTagToken
+//		<input> 	-> html.StartTagToken
 func isSelfClosingTag(tag []byte) bool {
 	switch string(tag) {
 	case "area", "base", "br", "col", "embed", "hr", "img", "input", "keygen", "link", "meta", "param", "source", "track", "wbr":
@@ -176,6 +182,7 @@ func isSelfClosingTag(tag []byte) bool {
 	return false
 }
 
+// PickHtml: get html of elements that matches the Option.TagName (including it's child elements)
 func PickHtml(option *Option, limit int) (res []string) {
 	if option == nil || option.PageSource == nil {
 		return
