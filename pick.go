@@ -139,6 +139,11 @@ func PickText(option *Option, limit int) (res []string) {
 
 			matched := false
 
+			// empty attr element
+			if !attr && option.Attr == nil {
+				matched = true
+			}
+
 			// get attr
 			for attr {
 				label, value, attr = z.TagAttr()
