@@ -6,17 +6,27 @@ import (
 	"golang.org/x/net/html"
 )
 
+// Option
+// PageSource: html reader
+// TagName: element's tag. ex: div, p, form, input...
 type Option struct {
 	PageSource io.Reader
 	TagName    string
 	Attr       *Attr // optional
 }
 
+// define an element's attribute
+// ex: <input type="hidden" />
+//		Attr{
+//			Label: "type"
+//			Value: "hidden"
+//		}
 type Attr struct {
 	Label string
 	Value string
 }
 
+// PickAttr: get attribute Option.Attr of elements that matches the Option.TagName
 func PickAttr(option *Option, AttrLabel string, limit int) (res []string) {
 	if option == nil || option.PageSource == nil {
 		return
