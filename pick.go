@@ -151,3 +151,12 @@ func PickText(option *Option) (res []string) {
 
 	return
 }
+
+func isSelfClosingTag(tag []byte) bool {
+	switch string(tag) {
+	case "area", "base", "br", "col", "embed", "hr", "img", "input", "keygen", "link", "meta", "param", "source", "track", "wbr":
+		return true
+	}
+
+	return false
+}
