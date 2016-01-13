@@ -148,7 +148,6 @@ func PickText(option *Option, limit int) (res []string) {
 			for attr {
 				label, value, attr = z.TagAttr()
 
-				// TODO: break when found
 				if option.Attr == nil || (option.Attr.Label == string(label) && option.Attr.Value == string(value)) {
 					matched = true
 				}
@@ -255,7 +254,6 @@ func PickHtml(option *Option, limit int) (res []string) {
 			for attr {
 				label, value, attr = z.TagAttr()
 
-				// TODO: break when found
 				if option.Attr == nil || (option.Attr.Label == string(label) && option.Attr.Value == string(value)) {
 
 					matched = true
