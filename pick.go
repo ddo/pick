@@ -176,3 +176,102 @@ func isSelfClosingTag(tag []byte) bool {
 
 	return false
 }
+
+func PickHtml(option *Option, limit int) (res []string) {
+	if option == nil || option.PageSource == nil {
+		return
+	}
+
+	z := html.NewTokenizer(option.PageSource)
+
+	depth := 0
+
+	for {
+		tokenType := z.Next()
+
+		switch tokenType {
+
+		// ignore the error token
+		// quit on eof
+		case html.ErrorToken:
+			if z.Err() == io.EOF {
+				return
+			}
+
+		// get text
+		case html.TextToken:
+			if depth > 0 {
+				// append to the last element
+				res[len(res)-1] = res[len(res)-1] + string(z.Raw())
+			}
+
+		case html.EndTagToken:
+			if depth > 0 {
+				depth--
+			}
+
+			if depth > 0 {
+				// append to the last element
+				res[len(res)-1] = res[len(res)-1] + string(z.Raw())
+			}
+
+		case html.SelfClosingTagToken:
+			// append to the last element
+			res[len(res)-1] = res[len(res)-1] + string(z.Raw())
+
+		case html.StartTagToken:
+			tagName, attr := z.TagName()
+
+			// inside the target
+			if depth > 0 {
+				// append to the last element
+				res[len(res)-1] = res[len(res)-1] + string(z.Raw())
+
+				if !isSelfClosingTag(tagName) {
+					depth++
+				}
+				continue
+			}
+
+			// check limit
+			if limit > 0 && len(res) >= limit {
+				return
+			}
+
+			if string(tagName) != option.TagName {
+				continue
+			}
+
+			var label, value []byte
+
+			matched := false
+
+			// empty attr element
+			if !attr && option.Attr == nil {
+				matched = true
+			}
+
+			// get attr
+			for attr {
+				label, value, attr = z.TagAttr()
+
+				// TODO: break when found
+				if option.Attr == nil || (option.Attr.Label == string(label) && option.Attr.Value == string(value)) {
+
+					matched = true
+				}
+			}
+
+			if !matched {
+				continue
+			}
+
+			depth++
+
+			// init an empty element
+			res = append(res, "")
+		}
+	}
+
+	return
+}
