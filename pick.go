@@ -84,7 +84,7 @@ func PickAttr(option *Option, AttrLabel string, limit int) (res []string) {
 	return
 }
 
-func PickText(option *Option) (res []string) {
+func PickText(option *Option, limit int) (res []string) {
 	if option == nil || option.PageSource == nil {
 		return
 	}
@@ -105,9 +105,11 @@ func PickText(option *Option) (res []string) {
 				return
 			}
 
+		// get text
 		case html.TextToken:
 			if depth > 0 {
-				res = append(res, string(z.Text()))
+				// append to the last element
+				res[len(res)-1] = res[len(res)-1] + string(z.Text())
 			}
 
 		case html.EndTagToken:
@@ -116,12 +118,18 @@ func PickText(option *Option) (res []string) {
 			}
 
 		case html.StartTagToken:
-			if depth > 0 {
+			tagName, attr := z.TagName()
+
+			// inside the target
+			if depth > 0 && !isSelfClosingTag(tagName) {
 				depth++
 				continue
 			}
 
-			tagName, attr := z.TagName()
+			// check limit
+			if limit > 0 && len(res) >= limit {
+				return
+			}
 
 			if string(tagName) != option.TagName {
 				continue
@@ -146,6 +154,9 @@ func PickText(option *Option) (res []string) {
 			}
 
 			depth++
+
+			// init an empty element
+			res = append(res, "")
 		}
 	}
 
