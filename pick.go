@@ -36,9 +36,7 @@ func PickAttr(option *Option, AttrLabel string, limit int) (res []string) {
 				return
 			}
 
-		case html.SelfClosingTagToken:
-			fallthrough
-		case html.StartTagToken:
+		case html.StartTagToken, html.SelfClosingTagToken:
 			tagName, attr := z.TagName()
 
 			if string(tagName) != option.TagName {
