@@ -15,18 +15,15 @@ type Option struct {
 	Attr       *Attr // optional
 }
 
-// define an element's attribute
-// ex: <input type="hidden" />
-//		Attr{
-//			Label: "type"
-//			Value: "hidden"
-//		}
+// Attr to define an element's attribute
+// <input type="hidden" />
+// -> Attr{Label: "type", Value: "hidden"}
 type Attr struct {
 	Label string
 	Value string
 }
 
-// PickAttr: get attribute Option.Attr of elements that matches the Option.TagName
+// PickAttr gets attribute Option.Attr of elements that matches the Option.TagName
 func PickAttr(option *Option, AttrLabel string, limit int) (res []string) {
 	if option == nil || option.PageSource == nil {
 		return
@@ -94,7 +91,7 @@ func PickAttr(option *Option, AttrLabel string, limit int) (res []string) {
 	return
 }
 
-// PickText: get text of elements that matches the Option.TagName (including it's child elements)
+// PickText gets text of elements that matches the Option.TagName (including it's child elements)
 func PickText(option *Option, limit int) (res []string) {
 	if option == nil || option.PageSource == nil {
 		return
@@ -178,11 +175,10 @@ func PickText(option *Option, limit int) (res []string) {
 	return
 }
 
-// isSelfClosingTag: return if it's a self closing tag
+// isSelfClosingTag returns if it's a self closing tag
 // html.SelfClosingTagToken is not always correct
-// ex:
-//		<input /> 	-> html.SelfClosingTagToken
-//		<input> 	-> html.StartTagToken
+// <input/> -> html.SelfClosingTagToken
+// <input> -> html.StartTagToken
 func isSelfClosingTag(tag []byte) bool {
 	switch string(tag) {
 	case "area", "base", "br", "col", "embed", "hr", "img", "input", "keygen", "link", "meta", "param", "source", "track", "wbr":
@@ -192,7 +188,7 @@ func isSelfClosingTag(tag []byte) bool {
 	return false
 }
 
-// PickHtml: get html of elements that matches the Option.TagName (including it's child elements)
+// PickHtml gets html of elements that matches the Option.TagName (including it's child elements)
 func PickHtml(option *Option, limit int) (res []string) {
 	if option == nil || option.PageSource == nil {
 		return
