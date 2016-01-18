@@ -9,4 +9,12 @@ pick stuff from html
 go get -u gopkg.in/ddo/pick.v1
 ```
 
-## pls check the v1 branch. i gonna merge the code soon
+
+## TODO:
+* #GetForm
+* NewTokenizerFragment
+* NextIsNotRawText
+* 1 testing html but cover all cases
+ * script
+ * AllowCDATA
+* benchmark
