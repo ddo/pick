@@ -228,8 +228,10 @@ func PickHtml(option *Option, limit int) (res []string) {
 			}
 
 		case html.SelfClosingTagToken:
-			// append to the last element
-			res[len(res)-1] = res[len(res)-1] + string(z.Raw())
+			if depth > 0 {
+				// append to the last element
+				res[len(res)-1] = res[len(res)-1] + string(z.Raw())
+			}
 
 		case html.StartTagToken:
 			tagName, attr := z.TagName()

@@ -179,7 +179,7 @@ func TestPickHtmlLimit(t *testing.T) {
 }
 
 func TestPickHtmlNilAttr(t *testing.T) {
-	pageSource := "<div class='target'><div><p>text1</p>text2<ul><li>text3</li><li>text4</li></ul></div></div><div class='target'><div><p>text1</p>text2<ul><li>text3</li><li>text4</li></ul></div></div>"
+	pageSource := "<div class='target'><div><input/><p>text1</p>text2<ul><li>text3</li><li>text4</li></ul></div></div><div class='target'><div><p>text1</p>text2<ul><li>text3</li><li>text4</li></ul></div></div>"
 
 	res := PickHtml(&Option{
 		PageSource: strings.NewReader(pageSource),
