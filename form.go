@@ -39,6 +39,7 @@ func PickForm(reader io.Reader, attr *Attr) (input map[string][]string) {
 			},
 		}, "value", 1)
 		if len(values) == 0 {
+			input[inputNameArr[i]] = []string{""}
 			continue
 		}
 
@@ -62,6 +63,7 @@ func PickForm(reader io.Reader, attr *Attr) (input map[string][]string) {
 			},
 		}, 1)
 		if len(values) == 0 {
+			input[textNameArr[i]] = []string{""}
 			continue
 		}
 
@@ -109,6 +111,7 @@ func PickForm(reader io.Reader, attr *Attr) (input map[string][]string) {
 			Attr:       nil,
 		}, "value", 1)
 		if len(values) == 0 {
+			input[selectNameArr[i]] = []string{""}
 			continue
 		}
 
