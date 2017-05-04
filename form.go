@@ -104,6 +104,19 @@ func PickForm(reader io.Reader, attr *Attr) (input map[string][]string) {
 			continue
 		}
 
+		values = PickAttr(&Option{
+			PageSource: strings.NewReader(selectHtmlArr[0]),
+			TagName:    "option",
+			Attr: &Attr{
+				Label: "selected",
+				Value: "selected",
+			},
+		}, "value", 1)
+		if len(values) != 0 {
+			input[selectNameArr[i]] = []string{values[0]}
+			continue
+		}
+
 		// if no select get the 1st option value
 		values = PickAttr(&Option{
 			PageSource: strings.NewReader(selectHtmlArr[0]),
